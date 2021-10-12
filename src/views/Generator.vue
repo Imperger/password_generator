@@ -4,9 +4,11 @@
     <CopyableTextInput :value="App.password" @input="App.setPassword" />
     <ImgButton @click="generatePassword" class="generateButton">
       <LockOpenOutline />
+      <span class="tooltip">Generate new password</span>
     </ImgButton>
     <ImgButton @click="goToSettings" class="settingsButton">
       <CogOutline />
+      <span class="tooltip">Settings</span>
     </ImgButton>
   </div>
 </main>

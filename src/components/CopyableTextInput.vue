@@ -41,6 +41,7 @@
     color: #fff;
     background-color: #000;
     border-radius: 2px;
+    pointer-events: none;
     transition: opacity 0.5s ease-out;
 }
 
