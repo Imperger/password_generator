@@ -20,6 +20,7 @@ export default new Vuex.Store({
       'settings.lowercaseAlphabet',
       'settings.uppercaseAlphabet',
       'settings.digitsAlphabet',
-      'settings.symbolsAlphabet']
+      'settings.symbolsAlphabet',
+      'settings.passwordLength']
   })]
 });

@@ -10,6 +10,8 @@ export default class Settings extends VuexModule {
 
     public symbolsAlphabet = false;
 
+    public passwordLength = 16;
+
     @Mutation
     public switchLowercaseAlphabet (state: boolean): void {
       this.lowercaseAlphabet = state;
@@ -28,5 +30,10 @@ export default class Settings extends VuexModule {
     @Mutation
     public switchSymbolsAlphabet (state: boolean): void {
       this.symbolsAlphabet = state;
+    }
+
+    @Mutation
+    public setPasswordLength (length: number): void {
+      this.passwordLength = length;
     }
 }

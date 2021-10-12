@@ -95,6 +95,8 @@ export default class Generator extends Mixins(ClipboardMixin, StoreMixin) {
       fact.addSymbols();
     }
 
+    fact.setLength(this.Settings.passwordLength);
+
     return fact.options();
   }
 
