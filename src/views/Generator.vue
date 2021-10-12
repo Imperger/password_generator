@@ -1,7 +1,7 @@
 <template>
 <main class="fillHeight">
   <div class="centered">
-    <CopyableTextInput v-model="password" />
+    <CopyableTextInput :value="App.password" @input="App.setPassword" />
     <ImgButton @click="generatePassword" class="generateButton">
       <LockOpenOutline />
     </ImgButton>
@@ -43,7 +43,6 @@ import { StoreMixin } from '@/mixins';
   }
 })
 export default class Generator extends Mixins(StoreMixin) {
-  private password = '';
   private gen!: PasswordGenerator;
 
   public created (): void {
@@ -63,7 +62,7 @@ export default class Generator extends Mixins(StoreMixin) {
   }
 
   private generatePassword (): void {
-    this.password = this.gen.generate(this.generatorOptions);
+    this.App.setPassword(this.gen.generate(this.generatorOptions));
   }
 
   private generateByEnter = (e: KeyboardEvent) => {
