@@ -20,3 +20,9 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app');
+
+(async function () {
+  if (!await navigator.serviceWorker.getRegistration()) {
+    await navigator.serviceWorker.register('/sw.js');
+  }
+})();
