@@ -1,7 +1,7 @@
 <template>
 <div class="copyableTextInputComponent">
     <input :value="value" @input="onInput" type="text" class="input" />
-    <button @click="copyText" :disabled="copyDisabled" class="copyButton">
+    <button @click="clipboardCopy" :disabled="copyDisabled" class="copyButton">
         <ContentCopy/>
         <span class="tooltip">Copy</span>
     </button>
@@ -50,30 +50,18 @@
 </style>
 
 <script lang="ts">
-import { Component, Model, Vue, Prop } from 'vue-property-decorator';
+import { Component, Model, Mixins, Vue, Prop } from 'vue-property-decorator';
 
-import { Clipboard } from '@/common/clipboard';
+import { ClipboardMixin } from '@/mixins';
 
 interface InputValue {
     target: { value: string };
 }
 
 @Component
-export default class CopyableTextInput extends Vue {
+export default class CopyableTextInput extends Mixins(ClipboardMixin) {
     @Model('input')
     private readonly value!: string;
-
-    private copyDisabled = false;
-    private clipboard!: Clipboard;
-
-    async created (): Promise<void> {
-      this.clipboard = new Clipboard();
-      this.copyDisabled = !await this.clipboard.RequestPermission();
-    }
-
-    private copyText () {
-      this.clipboard.Copy(this.value);
-    }
 
     private onInput (e: InputEvent & InputValue) { this.$emit('input', e.target?.value); }
 }

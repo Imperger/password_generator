@@ -34,7 +34,7 @@ import { Component, Mixins, Vue, Prop } from 'vue-property-decorator';
 import CopyableTextInput from '@/components/CopyableTextInput.vue';
 import ImgButton from '@/components/ImgButton.vue';
 import { GeneratorOptions, PasswordGenerator, PasswordGeneratorOptionsFactory } from '@/common/password-generator';
-import { StoreMixin } from '@/mixins';
+import { ClipboardMixin, StoreMixin } from '@/mixins';
 
 @Component({
   components: {
@@ -42,19 +42,19 @@ import { StoreMixin } from '@/mixins';
     ImgButton
   }
 })
-export default class Generator extends Mixins(StoreMixin) {
+export default class Generator extends Mixins(ClipboardMixin, StoreMixin) {
   private gen!: PasswordGenerator;
 
-  public created (): void {
+  public async created (): Promise<void> {
     this.gen = new PasswordGenerator();
   }
 
   public mounted (): void {
-    document.addEventListener('keydown', this.generateByEnter);
+    document.addEventListener('keydown', this.onShortcuts);
   }
 
   public destroyed (): void {
-    document.removeEventListener('keydown', this.generateByEnter);
+    document.removeEventListener('keydown', this.onShortcuts);
   }
 
   private goToSettings (): void {
@@ -65,9 +65,12 @@ export default class Generator extends Mixins(StoreMixin) {
     this.App.setPassword(this.gen.generate(this.generatorOptions));
   }
 
-  private generateByEnter = (e: KeyboardEvent) => {
+  private onShortcuts = (e: KeyboardEvent) => {
     if (e.code === 'Enter') {
       this.generatePassword();
+    }
+    if (e.ctrlKey && (e.code === 'KeyC' || e.code === 'Insert')) {
+      this.clipboardCopy(this.password());
     }
   };
 
@@ -91,6 +94,10 @@ export default class Generator extends Mixins(StoreMixin) {
     }
 
     return fact.options();
+  }
+
+  private password () {
+    return this.App.password;
   }
 }
 </script>
