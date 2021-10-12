@@ -13,6 +13,10 @@ export class PasswordGenerator {
     }
 
     public generate (options: GeneratorOptions): string {
+      if (options.alphabet.length === 0) {
+        return '';
+      }
+
       let ret = '';
 
       for (let n = 0; n < options.length; ++n) {
@@ -52,7 +56,7 @@ export class PasswordGeneratorOptionsFactory {
       return this.populateAlphabet(PasswordGeneratorOptionsFactory.uppercase);
     }
 
-    public addNumbers (): PasswordGeneratorOptionsFactory {
+    public addDigits (): PasswordGeneratorOptionsFactory {
       return this.populateAlphabet(PasswordGeneratorOptionsFactory.numbers);
     }
 

@@ -1,6 +1,14 @@
 <template>
 <main class="fillHeight">
-    <CopyableTextInput v-model="password" class="centered" />
+  <div class="centered">
+    <CopyableTextInput v-model="password" />
+    <ImgButton @click="generatePassword" class="generateButton">
+      <LockOpenOutline />
+    </ImgButton>
+    <ImgButton @click="goToSettings" class="settingsButton">
+      <CogOutline />
+    </ImgButton>
+  </div>
 </main>
 </template>
 
@@ -12,38 +20,50 @@
 .centered {
     margin: auto;
 }
+.generateButton {
+  left: 134px;
+}
+.settingsButton {
+  left: 220px;
+}
 </style>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Mixins, Vue, Prop } from 'vue-property-decorator';
 
 import CopyableTextInput from '@/components/CopyableTextInput.vue';
-import { PasswordGenerator, PasswordGeneratorOptionsFactory } from '@/common/password-generator';
+import ImgButton from '@/components/ImgButton.vue';
+import { GeneratorOptions, PasswordGenerator, PasswordGeneratorOptionsFactory } from '@/common/password-generator';
+import { StoreMixin } from '@/mixins';
 
 @Component({
   components: {
-    CopyableTextInput
+    CopyableTextInput,
+    ImgButton
   }
 })
-export default class Generator extends Vue {
+export default class Generator extends Mixins(StoreMixin) {
   private password = '';
   private gen!: PasswordGenerator;
-  private genOptions!: PasswordGeneratorOptionsFactory;
 
   public created (): void {
     this.gen = new PasswordGenerator();
-    this.genOptions = new PasswordGeneratorOptionsFactory();
+  }
 
-    this.genOptions
-      .addLowercase()
-      .addUppercase()
-      .addNumbers()
-      .addSymbols()
-      .setLength(16);
+  public mounted (): void {
+    document.addEventListener('keydown', this.generateByEnter);
+  }
+
+  public destroyed (): void {
+    document.removeEventListener('keydown', this.generateByEnter);
+  }
+
+  private goToSettings (): void {
+    this.$router.push({ name: 'Settings' });
   }
 
   private generatePassword (): void {
-    this.password = this.gen.generate(this.genOptions.options());
+    this.password = this.gen.generate(this.generatorOptions);
   }
 
   private generateByEnter = (e: KeyboardEvent) => {
@@ -52,12 +72,26 @@ export default class Generator extends Vue {
     }
   };
 
-  public mounted (): void {
-    document.addEventListener('keydown', this.generateByEnter);
-  }
+  private get generatorOptions (): GeneratorOptions {
+    const fact = new PasswordGeneratorOptionsFactory();
 
-  public destroyed (): void {
-    document.removeEventListener('keydown', this.generateByEnter);
+    if (this.Settings.lowercaseAlphabet) {
+      fact.addLowercase();
+    }
+
+    if (this.Settings.uppercaseAlphabet) {
+      fact.addUppercase();
+    }
+
+    if (this.Settings.digitsAlphabet) {
+      fact.addDigits();
+    }
+
+    if (this.Settings.symbolsAlphabet) {
+      fact.addSymbols();
+    }
+
+    return fact.options();
   }
 }
 </script>
