@@ -1,1 +1,1 @@
-[Link](https://imperger.github.io/password_generator/).
+[Link](https://imperger.github.io/password_generator/)
