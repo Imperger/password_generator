@@ -1,7 +1,7 @@
 <template>
 <div class="copyableTextInputComponent">
     <input :value="value" @input="onInput" type="text" class="input" />
-    <button @click="clipboardCopy" :disabled="copyDisabled" class="copyButton">
+    <button @click="clipboardCopy(value)" :disabled="copyDisabled" class="copyButton">
         <ContentCopy/>
         <span class="tooltip">Copy</span>
     </button>

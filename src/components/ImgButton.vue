@@ -1,5 +1,5 @@
 <template>
-<button @click="onClick" :disabled="isDisabled" type="button" class="imgButtonComponent">
+<button :disabled="disabled" v-on="$listeners" type="button" class="imgButtonComponent">
     <slot></slot>
 </button>
 </template>
@@ -41,18 +41,7 @@ interface ConcreteListener {
 }
 @Component
 export default class MyButton extends Vue {
-    @Prop({ type: Boolean, default: null })
-    private disabled!: boolean | null;
-
-    private disabledBtn = false;
-    private async onClick () {
-      this.disabledBtn = true;
-      await (this.$listeners.click as unknown as ConcreteListener)?.fns();
-      this.disabledBtn = false;
-    }
-
-    private get isDisabled () {
-      return this.disabled === null ? this.disabledBtn : this.disabled;
-    }
+    @Prop({ type: Boolean, default: false })
+    private disabled!: boolean;
 }
 </script>

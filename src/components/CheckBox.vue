@@ -44,7 +44,7 @@ export default class CheckBox extends Mixins(UniqueIdMixin) {
     @Model('checked')
     private readonly checked!: boolean;
 
-    @Prop()
+    @Prop({ type: String })
     private readonly caption!: string;
 
     private id!: string;
