@@ -23,6 +23,6 @@ new Vue({
 
 (async function () {
   if (!await navigator.serviceWorker.getRegistration()) {
-    await navigator.serviceWorker.register('/sw.js');
+    await navigator.serviceWorker.register(`${process.env.VUE_APP_BASE_URL}sw.js`);
   }
 })();

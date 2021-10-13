@@ -3,6 +3,10 @@ const fs = require('fs');
 
 const IsProduction = () => process.env.NODE_ENV === 'production';
 
+process.env.VUE_APP_BASE_URL = IsProduction()
+  ? '/password_generator/'
+  : '/';
+
 const devServerConfig = () => IsProduction()
   ? {}
   : {
@@ -14,8 +18,6 @@ const devServerConfig = () => IsProduction()
   };
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '/password_generator/'
-    : '/',
+  publicPath: process.env.VUE_APP_BASE_URL,
   devServer: devServerConfig()
 };
