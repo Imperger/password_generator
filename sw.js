@@ -5,7 +5,6 @@ self.addEventListener('fetch', e => {
     if (e.request.method === 'GET' &&
             url.origin === location.origin &&
             !url.pathname.includes('.')) {
-      console.log(e.request);
       url.pathname = '/index.html';
       return fetch(url.href);
     }
