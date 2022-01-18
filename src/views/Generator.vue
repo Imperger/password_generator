@@ -1,6 +1,6 @@
 <template>
 <main class="fillHeight">
-  <div class="centered">
+  <div>
     <CopyableTextInput :value="App.password" @input="App.setPassword" />
     <ImgButton @click="generatePassword" class="generateButton">
       <LockOpenOutline />
@@ -20,9 +20,6 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-}
-.centered {
-    margin: auto;
 }
 .generateButton {
   left: 134px;
