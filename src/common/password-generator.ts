@@ -48,20 +48,27 @@ export class PasswordGeneratorOptionsFactory {
 
     private alphabet = new Set<string>();
 
-    public addLowercase (): PasswordGeneratorOptionsFactory {
-      return this.populateAlphabet(PasswordGeneratorOptionsFactory.lowercase);
+    public allowLowercase (isAllowed: boolean): PasswordGeneratorOptionsFactory {
+      return isAllowed
+        ? this.populateAlphabet(PasswordGeneratorOptionsFactory.lowercase)
+        : this;
     }
 
-    public addUppercase (): PasswordGeneratorOptionsFactory {
-      return this.populateAlphabet(PasswordGeneratorOptionsFactory.uppercase);
+    public allowUppercase (isAllowed: boolean): PasswordGeneratorOptionsFactory {
+      return isAllowed
+        ? this.populateAlphabet(PasswordGeneratorOptionsFactory.uppercase)
+        : this;
     }
 
-    public addDigits (): PasswordGeneratorOptionsFactory {
-      return this.populateAlphabet(PasswordGeneratorOptionsFactory.numbers);
+    public allowDigits (isAllowed: boolean): PasswordGeneratorOptionsFactory {
+      return isAllowed
+        ? this.populateAlphabet(PasswordGeneratorOptionsFactory.numbers)
+        : this;
     }
 
-    public addSymbols (): PasswordGeneratorOptionsFactory {
-      return this.populateAlphabet(PasswordGeneratorOptionsFactory.symbols);
+    public allowSymbols (isAllowed: boolean): PasswordGeneratorOptionsFactory {
+      return isAllowed ? this.populateAlphabet(PasswordGeneratorOptionsFactory.symbols)
+        : this;
     }
 
     public addAlphabet (alphabet: string): PasswordGeneratorOptionsFactory {

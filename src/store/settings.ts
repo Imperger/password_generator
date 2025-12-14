@@ -1,39 +1,84 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators';
 
+export interface GeneratorTemplate {
+  id: number;
+  name: string;
+  template: string;
+  lowercaseAlphabet: boolean;
+  uppercaseAlphabet: boolean;
+  digitsAlphabet: boolean;
+  symbolsAlphabet: boolean;
+  passwordLength: number;
+}
+
 @Module({ name: 'settings' })
 export default class Settings extends VuexModule {
-    public lowercaseAlphabet = true;
+  public currentGeneratorTemplateId = 0;
 
-    public uppercaseAlphabet = true;
+  public generatorTemplates: GeneratorTemplate[] = [
+    {
+      id: Date.now(),
+      name: 'Strong Password',
+      template: '{rnd}',
+      lowercaseAlphabet: true,
+      uppercaseAlphabet: true,
+      digitsAlphabet: true,
+      symbolsAlphabet: true,
+      passwordLength: 16
+    }
+  ];
 
-    public digitsAlphabet = true;
+  public get generatorTemplate (): GeneratorTemplate {
+    return this.generatorTemplates.find(x => x.id === this.currentGeneratorTemplateId) ??
+      this.generatorTemplates[0];
+  }
 
-    public symbolsAlphabet = false;
+  @Action
+  async createTemplate (template: Omit<GeneratorTemplate, 'id'>): Promise<number> {
+    const id = Date.now();
 
-    public passwordLength = 16;
+    this.context.commit('addTemplate', { id, ...template });
 
-    @Mutation
-    public switchLowercaseAlphabet (state: boolean): void {
-      this.lowercaseAlphabet = state;
+    return id;
+  }
+
+  @Mutation
+  public addTemplate (template: GeneratorTemplate): void {
+    this.generatorTemplates.push({ ...template });
+  }
+
+  @Mutation
+  public updateTemplate (update: GeneratorTemplate): void {
+    const found = this.generatorTemplates.find(x => x.id === update.id);
+
+    if (found) {
+      found.name = update.name;
+      found.template = update.template;
+      found.lowercaseAlphabet = update.lowercaseAlphabet;
+      found.uppercaseAlphabet = update.uppercaseAlphabet;
+      found.digitsAlphabet = update.digitsAlphabet;
+      found.symbolsAlphabet = update.symbolsAlphabet;
+      found.passwordLength = update.passwordLength;
+    }
+  }
+
+  @Mutation
+  public removeTemplate (id: number): void {
+    const foundIdx = this.generatorTemplates.findIndex(x => x.id === id);
+
+    if (foundIdx === -1) {
+      return;
     }
 
-    @Mutation
-    public switchUppercaseAlphabet (state: boolean): void {
-      this.uppercaseAlphabet = state;
-    }
+    this.generatorTemplates.splice(foundIdx, 1);
 
-    @Mutation
-    public switchDigitsAlphabet (state: boolean): void {
-      this.digitsAlphabet = state;
-    }
+    this.currentGeneratorTemplateId = this.generatorTemplates[0].id;
+  }
 
-    @Mutation
-    public switchSymbolsAlphabet (state: boolean): void {
-      this.symbolsAlphabet = state;
+  @Mutation
+  public setActiveTemplate (id: number): void {
+    if (this.generatorTemplates.some(x => x.id === id)) {
+      this.currentGeneratorTemplateId = id;
     }
-
-    @Mutation
-    public setPasswordLength (length: number): void {
-      this.passwordLength = length;
-    }
+  }
 }

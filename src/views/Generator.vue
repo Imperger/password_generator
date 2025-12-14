@@ -1,31 +1,32 @@
 <template>
-<main class="fillHeight">
+<main class="fill-height">
   <div>
+    <Select
+    class="template-selector"
+    :value="Settings.generatorTemplate.id.toString()"
+    @input="Settings.setActiveTemplate(Number.parseInt($event))"
+    :options="generatorsSelectorOptions"
+    @create="openTemplateCreator"
+    @edit="openTemplateEditor" />
     <CopyableTextInput :value="App.password" @input="App.setPassword" />
-    <ImgButton @click="generatePassword" class="generateButton">
+    <ImgButton @click="generatePassword" class="generate-button">
       <LockOpenOutline />
       <span class="tooltip">Generate new password</span>
-    </ImgButton>
-    <ImgButton @click="goToSettings" class="settingsButton">
-      <CogOutline />
-      <span class="tooltip">Settings</span>
     </ImgButton>
   </div>
 </main>
 </template>
 
 <style scoped>
-.fillHeight {
+.fill-height {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
 }
-.generateButton {
+
+.generate-button {
   left: 134px;
-}
-.settingsButton {
-  left: 220px;
 }
 </style>
 
@@ -34,13 +35,17 @@ import { Component, Mixins, Vue, Prop } from 'vue-property-decorator';
 
 import CopyableTextInput from '@/components/CopyableTextInput.vue';
 import ImgButton from '@/components/ImgButton.vue';
+import Select, { SelectOption } from '@/components/TemplateSelector.vue';
 import { GeneratorOptions, PasswordGenerator, PasswordGeneratorOptionsFactory } from '@/common/password-generator';
 import { ClipboardMixin, StoreMixin } from '@/mixins';
+import { applyTemplate } from '@/common/apply-template';
+import { FormatDate } from '@/common/format-date';
 
 @Component({
   components: {
     CopyableTextInput,
-    ImgButton
+    ImgButton,
+    Select
   }
 })
 export default class Generator extends Mixins(ClipboardMixin, StoreMixin) {
@@ -58,12 +63,27 @@ export default class Generator extends Mixins(ClipboardMixin, StoreMixin) {
     document.removeEventListener('keydown', this.onShortcuts);
   }
 
-  private goToSettings (): void {
-    this.$router.push({ name: 'Settings' });
+  private openTemplateCreator (templateId: string): void {
+    this.$router.push({ name: 'CreateTemplate' });
+  }
+
+  private openTemplateEditor (templateId: string): void {
+    this.$router.push({ name: 'EditTemplate', params: { id: templateId } });
   }
 
   private generatePassword (): void {
-    this.App.setPassword(this.gen.generate(this.generatorOptions));
+    const password = applyTemplate(this.Settings.generatorTemplate.template,
+      {
+        rnd: () => this.gen.generate(this.generatorOptions),
+        date: () => FormatDate.fullDate(),
+        year: () => FormatDate.year(),
+        month: () => FormatDate.month(),
+        day: () => FormatDate.day(),
+        time: () => FormatDate.time(),
+        ts: () => FormatDate.timestamp()
+      });
+
+    this.App.setPassword(password);
   }
 
   private onShortcuts = (e: KeyboardEvent) => {
@@ -76,31 +96,23 @@ export default class Generator extends Mixins(ClipboardMixin, StoreMixin) {
   };
 
   private get generatorOptions (): GeneratorOptions {
-    const fact = new PasswordGeneratorOptionsFactory();
+    const template = this.Settings.generatorTemplate;
 
-    if (this.Settings.lowercaseAlphabet) {
-      fact.addLowercase();
-    }
-
-    if (this.Settings.uppercaseAlphabet) {
-      fact.addUppercase();
-    }
-
-    if (this.Settings.digitsAlphabet) {
-      fact.addDigits();
-    }
-
-    if (this.Settings.symbolsAlphabet) {
-      fact.addSymbols();
-    }
-
-    fact.setLength(this.Settings.passwordLength);
-
-    return fact.options();
+    return new PasswordGeneratorOptionsFactory()
+      .allowLowercase(template.lowercaseAlphabet)
+      .allowUppercase(template.uppercaseAlphabet)
+      .allowDigits(template.digitsAlphabet)
+      .allowSymbols(template.symbolsAlphabet)
+      .setLength(template.passwordLength)
+      .options();
   }
 
   private password () {
     return this.App.password;
+  }
+
+  private get generatorsSelectorOptions (): SelectOption[] {
+    return this.Settings.generatorTemplates.map(x => ({ value: x.id.toString(), label: x.name }));
   }
 }
 </script>

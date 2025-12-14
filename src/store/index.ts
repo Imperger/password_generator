@@ -17,10 +17,8 @@ export default new Vuex.Store({
   },
   plugins: [createPersistedState({
     paths: [
-      'settings.lowercaseAlphabet',
-      'settings.uppercaseAlphabet',
-      'settings.digitsAlphabet',
-      'settings.symbolsAlphabet',
-      'settings.passwordLength']
+      'settings.currentGeneratorTemplateId',
+      'settings.generatorTemplates'
+    ]
   })]
 });

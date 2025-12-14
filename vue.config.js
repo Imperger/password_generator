@@ -10,7 +10,8 @@ process.env.VUE_APP_BASE_URL = IsProduction()
 const devServerConfig = () => IsProduction()
   ? {}
   : {
-    host: 'dev.lan',
+    host: '0.0.0.0',
+    allowedHosts: ['dev.lan'],
     https: {
       key: fs.readFileSync('./dev/dev.key'),
       cert: fs.readFileSync('./dev/dev.cer')

@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 
 import Generator from '@/views/Generator.vue';
-import Settings from '@/views/Settings.vue';
+import TemplateBuilder from '@/views/TemplateBuilder.vue';
 
 Vue.use(VueRouter);
 
@@ -13,9 +13,14 @@ const routes: Array<RouteConfig> = [
     component: Generator
   },
   {
-    path: '/settings',
-    name: 'Settings',
-    component: Settings
+    path: '/template/new',
+    name: 'CreateTemplate',
+    component: TemplateBuilder
+  },
+  {
+    path: '/template/:id',
+    name: 'EditTemplate',
+    component: TemplateBuilder
   }
 ];
 
